@@ -177,3 +177,94 @@ def encode_frequency(n, v):
     qc.report('iqft')
 
     return qc
+
+
+# ----------------------- SINGLE QUBIT FUNCTIONS ----------------------- #
+no_arg_gates = ['h', 'x', 'y', 'z']
+arg_gates = ['p', 'rx', 'ry', 'rz']
+gates = no_arg_gates + arg_gates
+
+
+def add_gate(qc, cs, target, gate, angle):
+    if len(cs) == 1:
+        gate = 'c' + gate
+    elif len(cs) > 1:
+        gate = 'mc' + gate
+
+    m = getattr(qc, gate)
+
+    if angle is None:
+        if len(cs) == 1:
+            m(cs[0], int(target))
+        elif len(cs) > 1:
+            m(cs, int(target))
+        else:
+            m(int(target))
+    else:
+        if len(cs) == 1:
+            m(angle, cs[0], int(target))
+        elif len(cs) > 1:
+            m(angle, cs, int(target))
+        else:
+            m(angle, int(target))
+def create_single_qubit():
+    return QuantumCircuit(QuantumRegister(1))
+
+
+def apply_gate(qc, gate, angle=None, report=True):
+    gate = gate.lower()
+    if gate in arg_gates:
+        assert (angle is not None)
+    add_gate(qc, [], 0, gate, angle / 180 * pi if gate in arg_gates else None)
+    if report:
+        qc.report(f'Step {len(qc.reports) + 1}')
+
+def last_step(qc):
+    return len(qc.reports)
+
+def get_state(qc):
+    if not qc.reports:
+        state = qc.state
+    else:
+        state = qc.reports[f'Step {len(qc.reports)}'][2]
+
+    # print(state_table_to_string(state, display=Display.TERMINAL))
+    return f'{state_table_to_string(state)}'
+
+def reset(qc):
+    qc = QuantumCircuit(QuantumRegister(1))
+
+def last_step(qc):
+    return len(qc.reports)
+
+# ----------------------- ANY QUBIT FUNCTIONS ----------------------- #
+def create_any_qubit(qubits):
+    return QuantumCircuit(QuantumRegister(qubits))
+
+
+def apply_gate_any(qc, target, gate, angle=None, report=True):
+    gate = gate.lower()
+    if gate in arg_gates:
+        assert (angle is not None)
+    add_gate(qc, [], target, gate, angle / 180 * pi if gate in arg_gates else None)
+    if report:
+        qc.report(f'Step {len(qc.reports) + 1}')
+
+def last_step_any(qc):
+    return len(qc.reports)
+
+def get_state_any(qc):
+    if not qc.reports:
+        state = qc.state
+    else:
+        state = qc.reports[f'Step {len(qc.reports)}'][2]
+
+    # print(state_table_to_string(state, display=Display.TERMINAL))
+    return f'{state_table_to_string(state)}'
+
+
+def reset_any(qc, qubits):
+    qc = QuantumCircuit(QuantumRegister(qubits))
+
+def last_step_any(qc):
+    return len(qc.reports)
