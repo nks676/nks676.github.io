@@ -150,10 +150,10 @@
         from tabulate import tabulate
         from sty import bg
 
-        app_select = pn.widgets.Select(name="App", options=['Any qubit', 'Single qubit', 'Function encoding', 'Frequency encoding']).servable(target='app-select-widget')
-        app_switch = pn.widgets.Button(name='Select', button_type='primary').servable(target='app-switch-widget')
+        app_select = pn.widgets.Select(name="App", options=['Select an app', 'Any qubit', 'Single qubit', 'Function encoding', 'Frequency encoding']).servable(target='app-select-widget')
 
-        @pn.depends(app_switch, watch=True)
+
+        @pn.depends(app_select, watch=True, on_init=True)
         def run(v):
 
             js.clearInputs()
@@ -163,8 +163,8 @@
             if app_select.value == 'Any qubit':
                 qubits = pn.widgets.NumberInput(name='Number of qubits', start=1, end=5).servable(target='num-key-widget')
                 target = pn.widgets.NumberInput(name='Target', start=0, disabled=True).servable(target='num-value-widget')
-                gate = pn.widgets.Select(name='Gate', options=[None] + [gate.upper() for gate in gates]).servable(target='input-select-widget')
-                arg = pn.widgets.NumberInput(name='Angle (in degrees)', disabled=True).servable(target='poly-widget')
+                gate = pn.widgets.Select(name='Gate', options=[None] + [gate.upper() for gate in gates]).servable(target='poly-widget')
+                arg = pn.widgets.NumberInput(name='Angle (in degrees)', disabled=True).servable(target='input-select-widget') 
                 go = pn.widgets.Button(name='Apply', button_type='primary').servable(target='go-widget')
 
                 info = pn.pane.Str('').servable(target='info')
@@ -179,7 +179,7 @@
                 go.value = True
                 info.object = output
 
-                @pn.depends(qubits, watch=True)
+                @pn.depends(qubits, watch=True, on_init=True)
                 def select_qubits(v):
                     global qc
                     qc = create_any_qubit(qubits.value)
