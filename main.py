@@ -84,7 +84,7 @@ def state_table_to_string(state, display=Display.BROWSER, decimals=4, symbol='\u
 
     return output
 
-def grid_state_html(state, m=1, neg=False, show_probs=True, symbol='\u2588'):
+def grid_state_html(state, m=1, neg=False, show_probs=False, symbol='\u2588'):
     n = int(log2(len(state))) - m
     cols = 2**m
     rows = int(len(state) / cols) # first register
