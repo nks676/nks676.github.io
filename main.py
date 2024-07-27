@@ -84,25 +84,41 @@ def state_table_to_string(state, display=Display.BROWSER, decimals=4, symbol='\u
 
     return output
 
-def grid_state(state, m=1, neg=False, show_probs=False):
+def grid_state_html(state, m=1, neg=False, show_probs=True, symbol='\u2588'):
     n = int(log2(len(state))) - m
     cols = 2**m
     rows = int(len(state) / cols) # first register
-    print('\n')
-    if neg:
-        out = tabulate([[(str(k) if k < rows/2 else str(k - rows)) + ' = ' + bin(k)[2:].zfill(n)] + [
-            (' ' + (str(round(abs(state[k*cols + l])**2, 2)) if abs(state[k*cols + l]) > 0.01 else ''))
-            for l in range(cols)] for k in list(range(int(rows/2)))[::-1] + list(range(int(rows/2), rows))[::-1]],
-                       headers=[str(l) + ' = ' + bin(l)[2:].zfill(m) for l in range(cols)],
-                       tablefmt='fancy_grid')
-    else:
-        out = tabulate([[str(k) + ' = ' + bin(k)[2:].zfill(n)] + [
-            (' ' + (str(round(abs(state[k*cols + l])**2, 2)) if abs(state[k*cols + l]) > 0.01 else ''))
-            for l in range(cols)] for k in range(rows)[::-1]],
-                       headers=[str(l) + ' = ' + bin(l)[2:].zfill(m) for l in range(cols)],
-                       tablefmt='fancy_grid')
+    # adding styles
+    html_table = '<style> table, th, td {border: 1px solid black; border-collapse: collapse;} th, td { padding-top: 5px; padding-bottom: 5px; padding-left: 10px; padding-right: 10px;}</style>'
+    html_table += '<table>'
 
-    return out
+    # header row
+    headers = []
+    headers.append(f'<th></th>')
+    for l in range(cols):
+        headers.append(f'<th>{l} = {bin(l)[2:].zfill(m)}</th>')
+    html_table += '<tr>' + ''.join(headers) + '</tr>'
+
+    # rows
+    range_func = lambda x: range(x // 2).__reversed__() + range(x // 2, x).__reversed__() if neg else range(
+        x).__reversed__()
+    for k in range_func(rows):
+        row_label = f'{(k if k < rows / 2 else k - rows)} = {bin(k)[2:].zfill(n)}' if neg else f'{k} = {bin(k)[2:].zfill(n)}'
+        row = f'<tr><td>{row_label}</td>'
+
+        for l in range(cols):
+            index = k * cols + l
+            color = complex_to_rgb(state[index], True)
+            magnitude = int(abs(state[index] * 10))
+            probability = round(abs(state[index]) ** 2, 2) if show_probs and abs(state[index]) > 0.01 else ''
+            # Construct cell with embedded style
+            row += f'<td><font style="color:rgb{color}">{symbol * magnitude}</font>&nbsp;{probability}</td>'
+
+        html_table += row + '</tr>'
+
+    html_table += '</table>'
+
+    return html_table
 
 # ----------------------- QPE FUNCTIONS ----------------------- #
 def encode_term(coeff, vars, circuit, key, value):

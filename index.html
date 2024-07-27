@@ -111,6 +111,7 @@
             document.getElementById('info_title').innerHTML = '<u></u>'
         }
 
+
         function clearInfo() {
             const infoDiv = document.getElementById('info');
             if (infoDiv != null) {
@@ -164,7 +165,7 @@
                 qubits = pn.widgets.NumberInput(name='Number of qubits', start=1, end=5).servable(target='num-key-widget')
                 target = pn.widgets.NumberInput(name='Target', start=0, disabled=True).servable(target='num-value-widget')
                 gate = pn.widgets.Select(name='Gate', options=[None] + [gate.upper() for gate in gates]).servable(target='poly-widget')
-                arg = pn.widgets.NumberInput(name='Angle (in degrees)', disabled=True).servable(target='input-select-widget') 
+                arg = pn.widgets.NumberInput(name='Angle (in degrees)', disabled=True).servable(target='input-select-widget')
                 go = pn.widgets.Button(name='Apply', button_type='primary').servable(target='go-widget')
 
                 info = pn.pane.Str('').servable(target='info')
@@ -227,6 +228,7 @@
                 info = pn.pane.Str('').servable(target='info')
 
                 qc = create_single_qubit()
+                js.draw(circuit_to_string(qc))
                 global out
 
                 @pn.depends(gate, watch=True)
@@ -275,11 +277,11 @@
                     c = circuit_to_string(qc)
 
                     state = qc.reports['qpe'][2]
-                    s = f'State:\n{grid_state(state, n_key.value, False, True)}'
+                    s = f'State:\n{grid_state_html(state, n_key.value, False, True)}'
                     # s = f'State:\n{state_table_to_string(state)}'
                     js.draw(c)
 
-                    out = pn.pane.Str(f'{s}\n').servable(target='info')
+                    out = pn.pane.HTML(f'{s}\n').servable(target='info')
                     return out
 
             if app_select.value == 'Frequency encoding':
