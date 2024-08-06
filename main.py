@@ -100,8 +100,11 @@ def grid_state_html(state, m=1, neg=False, show_probs=False, symbol='\u2588'):
     html_table += '<tr>' + ''.join(headers) + '</tr>'
 
     # rows
-    range_func = lambda x: range(x // 2).__reversed__() + range(x // 2, x).__reversed__() if neg else range(
-        x).__reversed__()
+    if neg:
+        range_func = lambda x: list(range(x // 2))[::-1] + list(range(x // 2, x))[::-1]
+    else:
+        range_func = lambda x: range(x)[::-1]
+
     for k in range_func(rows):
         row_label = f'{(k if k < rows / 2 else k - rows)} = {bin(k)[2:].zfill(n)}' if neg else f'{k} = {bin(k)[2:].zfill(n)}'
         row = f'<tr><td>{row_label}</td>'

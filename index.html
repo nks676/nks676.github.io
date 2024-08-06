@@ -83,6 +83,7 @@
                     <div class="bk-root" id="num-value-widget"></div>
                     <div class="bk-root" id="poly-widget"></div>
                     <div class="bk-root" id="input-select-widget"></div>
+                    <div class="bk-root" id="negative-select-widget"></div>
                     <div class="bk-root" id="go-widget"></div>
 
                 </ul>
@@ -151,7 +152,7 @@
         from tabulate import tabulate
         from sty import bg
 
-        app_select = pn.widgets.Select(name="App", options=['Select an app', 'Any qubit', 'Single qubit', 'Function encoding', 'Frequency encoding']).servable(target='app-select-widget')
+        app_select = pn.widgets.Select(name="App", options=['Select', 'Any qubit', 'Single qubit', 'Function encoding', 'Frequency encoding']).servable(target='app-select-widget')
 
 
         @pn.depends(app_select, watch=True, on_init=True)
@@ -266,6 +267,7 @@
                 input_select = pn.widgets.Select(name="Type of expression", options=['Polynomial', 'Binary Terms']).servable(target='input-select-widget')
                 poly = pn.widgets.TextInput(name="Polynomial", value='x**2').servable(target='poly-widget')
                 go = pn.widgets.Button(name='Apply', button_type='primary').servable(target='go-widget')
+                negative = pn.widgets.Select(name="Negative values for grid state?", options=['Select', 'Yes', 'No']).servable(target='negative-select-widget')
 
                 @pn.depends(go, watch=True)
                 def function_encoding(v):
@@ -277,7 +279,9 @@
                     c = circuit_to_string(qc)
 
                     state = qc.reports['qpe'][2]
-                    s = f'State:\n{grid_state_html(state, n_key.value, False, True)}'
+                    # grid_state = grid_state_html(state, n_key.value, negative.value == 'Yes', True)
+                    grid_state = grid_state_html(state, n_key.value, negative.value == 'Yes', True)
+                    s = f'State:\n{grid_state}'
                     # s = f'State:\n{state_table_to_string(state)}'
                     js.draw(c)
 
