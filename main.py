@@ -84,6 +84,7 @@ def state_table_to_string(state, display=Display.BROWSER, decimals=4, symbol='\u
 
     return output
 
+# ----------------------- FUNCTION ENCODING FUNCTIONS ----------------------- #
 def grid_state_html(state, m=1, neg=False, show_probs=False, symbol='\u2588'):
     n = int(log2(len(state))) - m
     cols = 2**m
@@ -123,7 +124,6 @@ def grid_state_html(state, m=1, neg=False, show_probs=False, symbol='\u2588'):
 
     return html_table
 
-# ----------------------- QPE FUNCTIONS ----------------------- #
 def encode_term(coeff, vars, circuit, key, value):
     if isinstance(coeff, int) is False:
         coeff = coeff.value
@@ -180,7 +180,7 @@ def terms_from_poly(poly_str, num_bits, is_poly):
 
     return poly
 
-# ----------------------- FE FUNCTIONS ----------------------- #
+# ----------------------- FREQUENCY ENCODING FUNCTIONS ----------------------- #
 def encode_frequency(n, v):
     q = QuantumRegister(n)
     qc = QuantumCircuit(q)
