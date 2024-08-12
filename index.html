@@ -69,7 +69,7 @@
             <a href="/">
                 <img src="https://avatars.githubusercontent.com/u/163343503?v=4" width="80" class="logo" />
             </a>
-            <a class="title" href="" style="color: #f0ab3c">Learn Quantum Computing</a>
+            <a class="title" href="" style="color: #f0ab3c">Building Quantum Software</a>
         </div>
     </nav>
 
@@ -293,6 +293,7 @@
                 frequency = pn.widgets.FloatInput(name="Frequency", value=4.3, start=0).servable(target='num-value-widget')
                 go = pn.widgets.Button(name='Apply', button_type='primary').servable(target='go-widget')
                 @pn.depends(go, watch=True)
+
                 def run(v):
 
                     js.clearInfo()
