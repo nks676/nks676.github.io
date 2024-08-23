@@ -71,7 +71,7 @@ def state_table_to_string(state, display=Display.BROWSER, decimals=4, symbol='\u
                                                                                                      '0')) + '\u00b0' if
                               abs(round_state[k]) > 0 else offsets[4] * ' ').ljust(offsets[4], ' '),
 
-                             f'<font style="color:rgb{complex_to_rgb(round_state[k], ints=True)}">' + (
+                             f'<font style="color:rgb{tuple(complex_to_rgb(round_state[k], ints=True))}">' + (
                                          int(abs(state[k] * 24)) * symbol).ljust(offsets[5],
                                                                                  ' ') + '</font>' if display == display.BROWSER else
                              fg(*[int(255 * a) for a in complex_to_rgb(state[k])]) + (
@@ -112,7 +112,7 @@ def grid_state_html(state, m=1, neg=False, show_probs=False, symbol='\u2588'):
 
         for l in range(cols):
             index = k * cols + l
-            color = complex_to_rgb(state[index], True)
+            color = tuple(complex_to_rgb(state[index], True))
             magnitude = int(abs(state[index] * 10))
             probability = round(abs(state[index]) ** 2, 2) if show_probs and abs(state[index]) > 0.01 else ''
             # Construct cell with embedded style
