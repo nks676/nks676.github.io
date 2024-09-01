@@ -161,7 +161,7 @@
         from tabulate import tabulate
         from sty import bg
 
-        app_select = pn.widgets.Select(name="App", options=['Select', 'Multi qubit', 'Single qubit', 'Function encoding', 'Frequency encoding']).servable(target='app-select-widget')
+        app_select = pn.widgets.Select(name="App", options=['Select', 'Single qubit', 'Multi qubit',  'Function encoding', 'Frequency encoding']).servable(target='app-select-widget')
 
 
         @pn.depends(app_select, watch=True, on_init=True)
