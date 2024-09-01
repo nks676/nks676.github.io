@@ -81,14 +81,16 @@
                     <div class="bk-root" id="app-switch-widget"></div>
                     <div class="bk-root" id="num-key-widget"></div>
                     <div class="bk-root" id="num-value-widget"></div>
-                    <div class="bk-root" id="poly-widget"></div>
                     <div class="bk-root" id="input-select-widget"></div>
+                    <div class="bk-root" id="poly-widget"></div>
                     <div class="bk-root" id="negative-select-widget"></div>
                     <div class="bk-root" id="go-widget"></div>
 
                 </ul>
             </div>
             <div class="col mh-100 float-right" id="main">
+                <div class="bk-root" id="circuit_title_top"></div>
+                <div class="bk-root" id="circuit_top"></div>
                 <div class="bk-root" id="info_title"></div>
                 <div class="bk-root" id="info"></div>
                 <div class="bk-root" id="circuit_title"></div>
@@ -171,8 +173,8 @@
             if app_select.value == 'Any qubit':
                 qubits = pn.widgets.NumberInput(name='Number of qubits', start=1, end=5).servable(target='num-key-widget')
                 target = pn.widgets.NumberInput(name='Target', start=0, disabled=True).servable(target='num-value-widget')
-                gate = pn.widgets.Select(name='Gate', options=[None] + [gate.upper() for gate in gates]).servable(target='poly-widget')
-                arg = pn.widgets.NumberInput(name='Angle (in degrees)', disabled=True).servable(target='input-select-widget')
+                gate = pn.widgets.Select(name='Gate', options=[None] + [gate.upper() for gate in gates]).servable(target='input-select-widget')
+                arg = pn.widgets.NumberInput(name='Angle (in degrees)', disabled=True).servable(target='poly-widget')
                 go = pn.widgets.Button(name='Apply', button_type='primary').servable(target='go-widget')
 
                 info = pn.pane.Str('').servable(target='info')
@@ -268,28 +270,31 @@
 
 
             if app_select.value == 'Function encoding':
-                n_key = pn.widgets.IntInput(name="# Input Qubits", value=2).servable(target='num-key-widget')
-                n_value = pn.widgets.IntInput(name="# Output Qubits", value=4).servable(target='num-value-widget')
-                input_select = pn.widgets.Select(name="Type of input", options=['Integer variable', 'Binary variable'], value='Integer variable').servable(target='input-select-widget')
-                poly = pn.widgets.TextInput(name="Function", value='x**2').servable(target='poly-widget')
+                n_key = pn.widgets.IntInput(name="# of input qubits", value=2).servable(target='num-key-widget')
+                n_value = pn.widgets.IntInput(name="# of output qubits", value=4).servable(target='num-value-widget')
+                input_select = pn.widgets.Select(name="Type of input", options=['Integer variables', 'Binary variables'], value='Integer variables').servable(target='input-select-widget')
+                poly = pn.widgets.TextInput(name="Polynomial", value='x**2').servable(target='poly-widget')
                 go = pn.widgets.Button(name='Apply', button_type='primary').servable(target='go-widget')
-                negative = pn.widgets.Select(name="Negative values for output?", options=['Select', 'Yes', 'No']).servable(target='negative-select-widget')
+                negative = pn.widgets.Select(name="Negative values for output?", options=['Select', 'Yes', 'No'], value = 'No').servable(target='negative-select-widget')
 
 
                 @pn.depends(input_select, watch=True)
                 def change_expression(v):
-                    js.clearPoly()
-                    if input_select.value == 'Binary variable':
-                        poly = pn.widgets.TextInput(name="Function", value='x0').servable(target='poly-widget')
-
+                    if input_select.value == 'Binary variables':
+                        poly.value = 'x0'
+        
                     else:
-                        poly = pn.widgets.TextInput(name="Function", value='x**2').servable(target='poly-widget')
+                        poly.value = 'x**2'
 
                 @pn.depends(go, watch=True)
                 def function_encoding(v):
 
                     js.clearInfo()
-                    coeffs = terms_from_poly(poly.value, n_key.value, input_select.value == 'Integer variable')
+                    coeffs = terms_from_poly(poly.value, n_key.value, input_select.value == 'Integer variables')
+                    if type(coeffs) == str:
+                        out = pn.pane.HTML(f'{coeffs}').servable(target='info')
+                        return out
+                
                     qc = build_polynomial_circuit(n_key.value, n_value.value, coeffs)
 
                     c = circuit_to_string(qc)
@@ -305,7 +310,7 @@
                     return out
 
             if app_select.value == 'Frequency encoding':
-                qubits = pn.widgets.IntInput(name="Qubits", value=3, start=1, end=5).servable(target='num-key-widget')
+                qubits = pn.widgets.IntInput(name="# of qubits", value=3, start=1, end=5).servable(target='num-key-widget')
                 frequency = pn.widgets.FloatInput(name="Frequency", value=4.3, start=0).servable(target='num-value-widget')
                 go = pn.widgets.Button(name='Apply', button_type='primary').servable(target='go-widget')
                 @pn.depends(go, watch=True)
