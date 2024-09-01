@@ -161,7 +161,7 @@
         from tabulate import tabulate
         from sty import bg
 
-        app_select = pn.widgets.Select(name="App", options=['Select', 'Any qubit', 'Single qubit', 'Function encoding', 'Frequency encoding']).servable(target='app-select-widget')
+        app_select = pn.widgets.Select(name="App", options=['Select', 'Multi qubit', 'Single qubit', 'Function encoding', 'Frequency encoding']).servable(target='app-select-widget')
 
 
         @pn.depends(app_select, watch=True, on_init=True)
@@ -171,7 +171,7 @@
             js.clearInfo()
             js.clearCirc()
 
-            if app_select.value == 'Any qubit':
+            if app_select.value == 'Multi qubit':
                 qubits = pn.widgets.NumberInput(name='Number of qubits', start=1, end=5).servable(target='num-key-widget')
                 target = pn.widgets.NumberInput(name='Target', start=0, disabled=True).servable(target='num-value-widget')
                 gate = pn.widgets.Select(name='Gate', options=[None] + [gate.upper() for gate in gates]).servable(target='input-select-widget')
